@@ -10,10 +10,9 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 
-// Determine the base path for requires
-const basePath = process.env.NETLIFY_DEV ? "../.." : "../..";
-const indexRouter = require(path.join(basePath, "routes/index"));
-const usersRouter = require(path.join(basePath, "routes/users"));
+// Import routes using relative paths (works better with esbuild)
+const indexRouter = require("../../routes/index");
+const usersRouter = require("../../routes/users");
 
 const app = express();
 

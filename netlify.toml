@@ -1,15 +1,11 @@
 [build]
-  command = "npm install"
+  command = "npm install && cd netlify/functions && npm install"
   functions = "netlify/functions"
   publish = "public"
 
 [functions]
   node_bundler = "esbuild"
   included_files = ["views/**", "models/**", "routes/**", "service/**", "public/**"]
-  
-[functions.server]
-  node_bundler = "esbuild"
-  external_node_modules = ["express", "mongoose", "ejs"]
 
 [[redirects]]
   from = "/api/*"
