@@ -21,15 +21,11 @@ const app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-const username = process.env.DB_NAME;
-const password = process.env.DB_PASSWORD;
-const dataname = process.env.DB_DATABASE_NAME;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // Connect to the database
 mongoose
-  .connect(
-    `mongodb+srv://${username}:${password}@${dataname}.jpcevue.mongodb.net/?retryWrites=true&w=majority`
-  )
+  .connect(MONGODB_URI)
   .then(() => {
     console.log("DB connected");
   })
@@ -49,7 +45,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: `mongodb+srv://${username}:${password}@${dataname}.jpcevue.mongodb.net/?retryWrites=true&w=majority`,
+      mongoUrl: MONGODB_URI,
       ttl: 14 * 24 * 60 * 60, // session TTL (optional)
     }),
   })
