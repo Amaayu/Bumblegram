@@ -10,15 +10,23 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 
-const indexRouter = require("../../routes/index");
-const usersRouter = require("../../routes/users");
+// Determine the base path for requires
+const basePath = process.env.NETLIFY_DEV ? "../.." : "../..";
+const indexRouter = require(path.join(basePath, "routes/index"));
+const usersRouter = require(path.join(basePath, "routes/users"));
 
 const app = express();
 
 // View engine setup - handle both local dev and production
-const viewsPath = process.env.NETLIFY_DEV 
-  ? path.join(process.cwd(), "views")
-  : path.join(__dirname, "../../views");
+let viewsPath;
+if (process.env.NETLIFY_DEV) {
+  viewsPath = path.join(process.cwd(), "views");
+} else if (process.env.LAMBDA_TASK_ROOT) {
+  // Running in AWS Lambda (Netlify production)
+  viewsPath = path.join(process.env.LAMBDA_TASK_ROOT, "views");
+} else {
+  viewsPath = path.join(__dirname, "../../views");
+}
 app.set("views", viewsPath);
 app.set("view engine", "ejs");
 
@@ -54,9 +62,15 @@ app.use(logger("dev"));
 app.use(cookieParser());
 
 // Static files - handle both local dev and production
-const publicPath = process.env.NETLIFY_DEV
-  ? path.join(process.cwd(), "public")
-  : path.join(__dirname, "../../public");
+let publicPath;
+if (process.env.NETLIFY_DEV) {
+  publicPath = path.join(process.cwd(), "public");
+} else if (process.env.LAMBDA_TASK_ROOT) {
+  // Running in AWS Lambda (Netlify production)
+  publicPath = path.join(process.env.LAMBDA_TASK_ROOT, "public");
+} else {
+  publicPath = path.join(__dirname, "../../public");
+}
 app.use(express.static(publicPath));
 app.use(
   session({
@@ -86,6 +100,8 @@ app.use(function (req, res, next) {
 
 // Error handler
 app.use(function (err, req, res, next) {
+  console.error("Error occurred:", err);
+  
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
@@ -95,9 +111,11 @@ app.use(function (err, req, res, next) {
   try {
     res.render("error");
   } catch (viewError) {
+    console.error("Error rendering error view:", viewError);
     res.json({ 
       error: err.message,
-      status: err.status || 500 
+      status: err.status || 500,
+      details: process.env.NODE_ENV === "development" ? err.stack : undefined
     });
   }
 });

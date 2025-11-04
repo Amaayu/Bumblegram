@@ -5,6 +5,11 @@
 
 [functions]
   node_bundler = "esbuild"
+  included_files = ["views/**", "models/**", "routes/**", "service/**", "public/**"]
+  
+[functions.server]
+  node_bundler = "esbuild"
+  external_node_modules = ["express", "mongoose", "ejs"]
 
 [[redirects]]
   from = "/api/*"
