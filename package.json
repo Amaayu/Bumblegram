@@ -4,10 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "dev": "netlify dev",
-    "dev:netlify": "netlify dev",
-    "deploy": "./deploy.sh",
-    "deploy:prod": "./deploy.sh prod"
+    "dev": "nodemon app.js"
   },
   "dependencies": {
     "cloudinary": "^1.41.0",
@@ -25,10 +22,6 @@
     "morgan": "^1.10.1",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.2",
-    "uuid": "^9.0.1",
-    "serverless-http": "^3.2.0"
-  },
-  "devDependencies": {
-    "netlify-cli": "^17.0.0"
+    "uuid": "^9.0.1"
   }
 }
